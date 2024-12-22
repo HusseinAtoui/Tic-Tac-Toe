@@ -1,0 +1,92 @@
+#include <iostream>
+using namespace std;
+
+struct player
+{
+    string name;
+    char symbol;
+};
+
+// function that displays the board of game
+void displayBoard(char board[9])
+{
+    cout << "\n";
+    cout << " " << board[0] << " " << "|" << " " << board[1] << " " << "|" << " " << board[2] << " " << "\n";
+    cout << "---|---|---" << "\n";
+    cout << " " << board[3] << " " << "|" << " " << board[4] << " " << "|" << " " << board[5] << " " << "\n";
+    cout << "---|---|---" << "\n";
+    cout << " " << board[6] << " " << "|" << " " << board[7] << " " << "|" << " " << board[8] << " " << "\n";
+    cout << "\n";
+}
+
+void movePlacement(char board[9], char player)
+{
+    int move;
+    do
+    {
+        cout << "Enter a number between [1-9]: ";
+        cin >> move;
+        move--;
+
+        if (board[move] == ' ')
+        {
+            board[move] = player;
+            break;
+        }
+        else if (move < 0 || move > 8)
+        {
+            cout << "Invalid move, the number should be between [1-9]. \n\n";
+        }
+        else
+        {
+            cout << "Invalid move, the number is already chosen. \n\n";
+        }
+    } while (true);
+}
+
+void checkWin(char board[9], struct player player)
+{
+    if (board[0] == board[1] && board[1] == board[2])
+    {
+        if (board[0] == player.symbol)
+            cout << player.name << "Wins The Game! \n";
+    }
+}
+
+int main()
+{
+    char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+    cout << "Tic-Tac-Toe : Two pLayer Game!" << "\n";
+
+    struct player player1;
+    struct player player2;
+
+    cout << "Players Assignment: \n\n";
+
+    cout << "Enter the name of the player with symbol 'X': ";
+    getline(cin, player1.name);
+    player1.symbol = 'X';
+
+    cout << "Enter the name of the player with symbol 'O': ";
+
+    getline(cin, player2.name);
+    player2.symbol = 'O';
+
+    displayBoard(board);
+
+    struct player curPlayer = player1;
+    struct player oppPlayer = player2;
+
+    while (true)
+    {
+        cout << curPlayer.name << "'s turn: \n\n";
+        movePlacement(board, curPlayer.symbol);
+        displayBoard(board);
+
+        checkWin(board, curPlayer);
+        struct player temp = curPlayer;
+        curPlayer = oppPlayer;
+        oppPlayer = temp;
+    }
+    return 0;
+}
