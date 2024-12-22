@@ -19,6 +19,7 @@ void displayBoard(char board[9])
     cout << "\n";
 }
 
+// places the moves of player
 void movePlacement(char board[9], char player)
 {
     int move;
@@ -26,6 +27,15 @@ void movePlacement(char board[9], char player)
     {
         cout << "Enter a number between [1-9]: ";
         cin >> move;
+
+        if (cin.fail()) // not an integer
+        {
+            cin.clear();
+            cin.ignore();
+            cout << "Invalid input, please enter a number between [1-9]. \n\n";
+            continue;
+        }
+
         move--;
 
         if (board[move] == ' ')
@@ -44,6 +54,7 @@ void movePlacement(char board[9], char player)
     } while (true);
 }
 
+// checks for wins
 int checkWin(char board[9], struct player player)
 {
     // row 1
@@ -53,54 +64,69 @@ int checkWin(char board[9], struct player player)
             return 1;
     }
     // row 2
-    if (board[3] == board[4] && board[4] == board[5] && (board[3] == 'X' || board[3] == 'O'))
+    else if (board[3] == board[4] && board[4] == board[5] && (board[3] == 'X' || board[3] == 'O'))
     {
         if (board[3] == player.symbol)
             return 1;
     }
     // row 3
-    if (board[6] == board[7] && board[7] == board[8] && (board[6] == 'X' || board[6] == 'O'))
+    else if (board[6] == board[7] && board[7] == board[8] && (board[6] == 'X' || board[6] == 'O'))
     {
         if (board[6] == player.symbol)
             return 1;
     }
 
     // col 1
-    if (board[0] == board[3] && board[3] == board[6] && (board[0] == 'X' || board[0] == 'O'))
+    else if (board[0] == board[3] && board[3] == board[6] && (board[0] == 'X' || board[0] == 'O'))
     {
         if (board[0] == player.symbol)
             return 1;
     }
     // col 2
-    if (board[1] == board[4] && board[4] == board[7] && (board[1] == 'X' || board[1] == 'O'))
+    else if (board[1] == board[4] && board[4] == board[7] && (board[1] == 'X' || board[1] == 'O'))
     {
         if (board[1] == player.symbol)
             return 1;
     }
     // col 3
-    if (board[2] == board[5] && board[5] == board[8] && (board[2] == 'X' || board[2] == 'O'))
+    else if (board[2] == board[5] && board[5] == board[8] && (board[2] == 'X' || board[2] == 'O'))
     {
         if (board[2] == player.symbol)
             return 1;
     }
 
     // diagonal 1
-    if (board[0] == board[4] && board[4] == board[8] && (board[0] == 'X' || board[0] == 'O'))
+    else if (board[0] == board[4] && board[4] == board[8] && (board[0] == 'X' || board[0] == 'O'))
     {
         if (board[0] == player.symbol)
             return 1;
     }
-
     // diagonal 2
-    if (board[2] == board[4] && board[4] == board[6] && (board[2] == 'X' || board[2] == 'O'))
+    else if (board[2] == board[4] && board[4] == board[6] && (board[2] == 'X' || board[2] == 'O'))
     {
         if (board[2] == player.symbol)
             return 1;
     }
 
+    //  tie
+    int tie_counter = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        if (board[i] != ' ')
+        {
+            tie_counter++;
+        }
+
+        if (tie_counter == 9)
+        {
+            return 2;
+        }
+    }
+
     return 0;
 }
 
+// option 2, two player
 void twoPlayerMain(char board[9])
 {
     cout << "------------------------------" << "\n";
@@ -110,6 +136,7 @@ void twoPlayerMain(char board[9])
     struct player player2;
 
     cout << "Players Assignment: \n\n";
+    cin.ignore();
 
     cout << "Enter the name of the player with symbol 'X': ";
     getline(cin, player1.name);
@@ -133,7 +160,12 @@ void twoPlayerMain(char board[9])
 
         if (checkWin(board, curPlayer) == 1)
         {
-            cout << curPlayer.name << " Wins The Game! \n";
+            cout << curPlayer.name << " Wins The Game! \n\n";
+            break;
+        }
+        else if (checkWin(board, curPlayer) == 2)
+        {
+            cout << "It's A Tie! \n\n";
             break;
         }
 
