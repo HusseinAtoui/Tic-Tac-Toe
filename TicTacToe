@@ -101,9 +101,9 @@ int checkWin(char board[9], struct player player)
     return 0;
 }
 
-int main()
+void twoPlayerMain(char board[9])
 {
-    char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+    cout << "------------------------------" << "\n";
     cout << "Tic-Tac-Toe : Two pLayer Game!" << "\n";
 
     struct player player1;
@@ -141,5 +141,48 @@ int main()
         curPlayer = oppPlayer;
         oppPlayer = temp;
     }
+}
+int main()
+{
+    char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+
+    cout << "Welcome To The Tic Tac Toe Game! \n\n";
+
+    int gameplay_option;
+
+    while (true)
+    {
+        cout << "Game Play Options: \n";
+        cout << "------------------ \n";
+        cout << "1> One Player Game.\n";
+        cout << "2> Two Player Game.\n";
+        cout << "3> Exit  The  Game.\n";
+        cout << "------------------ \n";
+
+        cout << "Please Choose An Option (1 or 2 or 3): ";
+        cin >> gameplay_option;
+
+        if (gameplay_option == 1)
+        {
+            break;
+        }
+        else if (gameplay_option == 2)
+        {
+            cout << "\n\n";
+            twoPlayerMain(board);
+        }
+        else if (gameplay_option == 3)
+        {
+            cout << "\n";
+            cout << "Hope you had fun. See you next time! ";
+            break;
+        }
+        else
+        {
+            cout << "\n";
+            cout << "Invalid input! Options available (1 or 2 or 3)! \n";
+        }
+    }
+
     return 0;
 }
