@@ -1,10 +1,13 @@
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 struct player
 {
     string name;
     char symbol;
+    int lastMove;
 };
 
 // function that displays the board of game
@@ -54,7 +57,66 @@ void movePlacement(char board[9], char player)
     } while (true);
 }
 
-// checks for wins
+// checks if the bot can perform a winning move || can use it for opp to check if he can wein and place it to block him
+int botCheckWin(char board[9], char player, int move)
+{
+    for (int i = 0; i < 9; i++)
+    {
+        if (board[i] == ' ')
+        {
+            board[i] = player;
+
+            if ((board[0] == player && board[1] == player && board[2] == player) ||
+                (board[3] == player && board[4] == player && board[5] == player) ||
+                (board[6] == player && board[7] == player && board[8] == player) ||
+                (board[0] == player && board[3] == player && board[6] == player) ||
+                (board[1] == player && board[4] == player && board[7] == player) ||
+                (board[2] == player && board[5] == player && board[8] == player) ||
+                (board[0] == player && board[4] == player && board[8] == player) ||
+                (board[2] == player && board[4] == player && board[6] == player))
+            {
+                board[i] = ' ';
+                move = i;
+                return move; // found win
+            }
+            board[i] = ' ';
+        }
+    }
+    return 0;
+}
+
+// 1 player - bot vs player: generates move
+void botMovePlacement(char board[9], char curplayer, char oppPlayer)
+{
+    int move = -1;
+
+    // check win possible case
+    if (botCheckWin(board, curplayer, move) != 0)
+    {
+        move = botCheckWin(board, curplayer, move);
+        board[move] = curplayer;
+        return;
+    }
+
+    // check opp win case to block
+    if (botCheckWin(board, oppPlayer, move) != 0)
+    {
+        move = botCheckWin(board, oppPlayer, move);
+        board[move] = curplayer;
+        return;
+    }
+
+    // random case
+    srand(time(0));
+    do
+    {
+        move = rand() % 9;
+    } while (board[move] != ' ');
+
+    board[move] = curplayer;
+}
+
+// returns 0 (no win), 1 (win), 2 (tie)
 int checkWin(char board[9], struct player player)
 {
     // row 1
@@ -130,7 +192,7 @@ int checkWin(char board[9], struct player player)
 void twoPlayerMain(char board[9])
 {
     cout << "------------------------------" << "\n";
-    cout << "Tic-Tac-Toe : Two pLayer Game!" << "\n";
+    cout << "Tic-Tac-Toe : Two Player Game!" << "\n";
 
     struct player player1;
     struct player player2;
@@ -174,6 +236,91 @@ void twoPlayerMain(char board[9])
         oppPlayer = temp;
     }
 }
+
+// option 1, one player
+void OnePlayerMain(char board[9])
+{
+    cout << "------------------------------" << "\n";
+    cout << "Tic-Tac-Toe : One Player Game!" << "\n";
+
+    struct player player1;
+    struct player player2;
+
+    cout << "Players Assignment: \n\n";
+    cin.ignore();
+
+    cout << "Enter the name of the player : ";
+    getline(cin, player1.name);
+    char bot_symbol;
+    cout << "Choose a symbol 'X' or 'O': ";
+    while (true)
+    {
+        cin >> bot_symbol;
+
+        if (bot_symbol >= 'a' && bot_symbol <= 'z')
+        {
+            bot_symbol = bot_symbol - 'a' + 'A';
+        }
+
+        if (bot_symbol == 'X' || bot_symbol == 'O')
+        {
+            player1.symbol = bot_symbol;
+            break;
+        }
+        else
+        {
+            cout << "Invalid input! Please enter 'X' or 'O':  ";
+        }
+    }
+
+    // self assign for bot
+    cout << "\nYou will play against \"Max\"! \n";
+    player2.name = "Max";
+    if (player1.symbol == 'X')
+    {
+        player2.symbol = 'O';
+    }
+    else
+    {
+        player2.symbol = 'X';
+    }
+
+    displayBoard(board);
+
+    struct player curPlayer = player1;
+    struct player oppPlayer = player2;
+
+    while (true)
+    {
+        cout << curPlayer.name << "'s turn: \n\n";
+        if (curPlayer.name == player1.name)
+        {
+            movePlacement(board, curPlayer.symbol);
+        }
+        else
+        {
+            botMovePlacement(board, curPlayer.symbol, oppPlayer.symbol);
+        }
+
+        displayBoard(board);
+
+        if (checkWin(board, curPlayer) == 1)
+        {
+            cout << curPlayer.name << " Wins The Game! \n\n";
+            break;
+        }
+        else if (checkWin(board, curPlayer) == 2)
+        {
+            cout << "It's A Tie! \n\n";
+            break;
+        }
+
+        struct player temp = curPlayer;
+        curPlayer = oppPlayer;
+        oppPlayer = temp;
+    }
+}
+
 int main()
 {
     char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
@@ -196,7 +343,8 @@ int main()
 
         if (gameplay_option == 1)
         {
-            break;
+            cout << "\n\n";
+            OnePlayerMain(board);
         }
         else if (gameplay_option == 2)
         {
