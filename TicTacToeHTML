@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="TicTacToeStyleSheet.css">
+</head>
+
+<body>
+    <div id="gameContainer">
+        <h1 id="gameTitle">Tic Tac Toe</h1>
+
+        <div id="modeOptions">
+            <h3>Select A Game Mode:</h3>
+            <button class="buttons" id="onePlayerbtn">One Player</button>
+            <button class="buttons" id="twoPlayerbtn">Two Player</button>
+        </div>
+
+        <div id="boardContainer" style="display: none;">
+            <div cellIndex="0" class="boardCell"></div>
+            <div cellIndex="1" class="boardCell"></div>
+            <div cellIndex="2" class="boardCell"></div>
+            <div cellIndex="3" class="boardCell"></div>
+            <div cellIndex="4" class="boardCell"></div>
+            <div cellIndex="5" class="boardCell"></div>
+            <div cellIndex="6" class="boardCell"></div>
+            <div cellIndex="7" class="boardCell"></div>
+            <div cellIndex="8" class="boardCell"></div>
+        </div>
+        <h2 id="curText"></h2>
+        <button id="replayGameBtn" class="buttons" style="display: none;">Restart</button>
+    </div>
+
+    <script src="TicTacToe.js"></script>
+</body>
+
+</html>
