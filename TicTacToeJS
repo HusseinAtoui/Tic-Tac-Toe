@@ -1,0 +1,184 @@
+const boardCells = document.querySelectorAll(".boardCell");
+const curText = document.querySelector("#curText");
+const replayGameBtn = document.querySelector("#replayGameBtn");
+const onePlayerbtn = document.querySelector("#onePlayerbtn");
+const twoPlayerbtn = document.querySelector("#twoPlayerbtn");
+const modeOptions = document.querySelector("#modeOptions");
+const boardContainer = document.querySelector("#boardContainer");
+
+const winner = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+];
+
+let board = ["", "", "", "", "", "", "", "", ""];
+let curPlayer = "X";
+let running = false;
+let onePlayer = false;
+
+onePlayerbtn.addEventListener("click", () => startGame(true));
+twoPlayerbtn.addEventListener("click", () => startGame(false));
+
+function startGame(isOnePlayer) {
+    onePlayer = isOnePlayer;
+    modeOptions.style.display = "none";
+    boardContainer.style.display = "grid";
+    replayGameBtn.style.display = "inline";
+    initializeGame();
+}
+
+function initializeGame() {
+    boardCells.forEach(cell => cell.addEventListener("click", cellClicked));
+    replayGameBtn.addEventListener("click", replayGame);
+    curText.textContent = `${curPlayer}'s Turn!`;
+    running = true;
+}
+
+function cellClicked() {
+    const cellIndex = this.getAttribute("cellIndex");
+
+    if (board[cellIndex] != "" || !running) {
+        return;
+    }
+
+    updateBoardCell(this, cellIndex);
+    checkWinner();
+
+    if (onePlayer && running && curPlayer === "O") {
+        botMove();
+    }
+}
+
+function updateBoardCell(cell, index) {
+    board[index] = curPlayer;
+    cell.textContent = curPlayer;
+    changePlayer();
+}
+
+function changePlayer() {
+    curPlayer = curPlayer === "X" ? "O" : "X";
+    curText.textContent = `${curPlayer}'s Turn!`;
+}
+
+function checkWinner() {
+    let roundwon = false;
+
+    for (let i = 0; i < winner.length; i++) {
+        const condition = winner[i];
+        const cellA = board[condition[0]];
+        const cellB = board[condition[1]];
+        const cellC = board[condition[2]];
+
+        if (cellA == "" || cellB == "" || cellC == "") {
+            continue;
+        }
+
+        if (cellA == cellB && cellB == cellC) {
+            roundwon = true;
+            curText.textContent = `${cellA} Wins!`;
+            running = false;
+            break;
+        }
+    }
+
+    if (!board.includes("")) {
+        curText.textContent = "Draw!";
+        running = false;
+    }
+}
+
+let isFirstMove = true;
+
+function botMove() {
+    let move;
+
+    if (isFirstMove) {
+        move = randomMove();
+        isFirstMove = false;
+    } else {
+        move = bestMovePlacement("O");
+
+        if (move === -1) {
+            move = bestMovePlacement("X");
+        }
+
+        if (move === -1) {
+            move = pickStrategicMove();
+        }
+
+        if (move === -1) {
+            move = randomMove();
+        }
+    }
+
+    updateBoardCell(boardCells[move], move);
+    checkWinner();
+}
+
+function pickStrategicMove() {
+    if (board[4] === "") {
+        return 4; // Center position
+    }
+
+    const corners = [0, 2, 6, 8];
+    for (let i = 0; i < corners.length; i++) {
+        if (board[corners[i]] === "") {
+            return corners[i];
+        }
+    }
+    return -1;
+}
+
+// Checks for the best move placement to win or block
+function bestMovePlacement(player) {
+    for (let i = 0; i < winner.length; i++) {
+        const [a, b, c] = winner[i];
+
+        if (board[a] === player && board[b] === player && board[c] === "") {
+            return c;
+        }
+
+        if (board[a] === "" && board[b] === player && board[c] === player) {
+            return a;
+        }
+
+        if (board[a] === player && board[b] === "" && board[c] === player) {
+            return b;
+        }
+    }
+
+    return -1;
+}
+
+function randomMove() {
+    const emptyBoardCells = [];
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === "") {
+            emptyBoardCells.push(i);
+        }
+    }
+
+    return emptyBoardCells[Math.floor(Math.random() * emptyBoardCells.length)];
+}
+
+
+function replayGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    curPlayer = "X";
+    running = true;
+
+    boardCells.forEach(cell => {
+        cell.textContent = "";
+    })
+
+    curText.textContent = "";
+    boardContainer.style.display = "none";
+    replayGameBtn.style.display = "none";
+    modeOptions.style.display = "block";
+}
